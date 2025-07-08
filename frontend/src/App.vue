@@ -41,6 +41,13 @@
           :order-summary="orderSummary"
           :calculating="calculating"
         />
+        
+        <!-- Panel de pago -->
+        <PaymentPanel 
+          v-if="orderSummary && orderSummary.total > 0"
+          :total-cost="orderSummary.total"
+          @payment-success="handlePaymentSuccess"
+        />
       </div>
     </div>
   </div>
@@ -50,13 +57,15 @@
 import { ref, onMounted, watch } from 'vue'
 import ProductCard from './components/ProductCard.vue'
 import CartSummary from './components/CartSummary.vue'
+import PaymentPanel from './components/PaymentPanel.vue'
 import { productService, cartService } from './services/api.js'
 
 export default {
   name: 'App',
   components: {
     ProductCard,
-    CartSummary
+    CartSummary,
+    PaymentPanel
   },
   setup() {
     const products = ref([])
@@ -74,7 +83,7 @@ export default {
         const data = await productService.getAllProducts()
         products.value = data
       } catch (err) {
-        error.value = 'Error al cargar los productos. Verifique que el servidor esté ejecutándose.'
+        error.value = 'Error al cargar los productos. Backend no esta encendido o no responde.'
         console.error('Error loading products:', err)
       } finally {
         loading.value = false
@@ -130,6 +139,18 @@ export default {
       }
     }
 
+    const handlePaymentSuccess = async (paymentResult) => {
+      // Limpiar carrito
+      cartItems.value = []
+      orderSummary.value = null
+      
+      // Actualizar stock
+      await loadProducts()
+      
+      // Mostrar mensaje del cambio
+      alert(`Compra exitosa ${paymentResult.changeAmount > 0 ? `Su cambio es de ₡${paymentResult.changeAmount.toLocaleString()}` : ''}`)
+    }
+
     // Recalcular cuando cambie el carrito
     watch(cartItems, calculateTotal, { deep: true })
 
@@ -145,7 +166,8 @@ export default {
       orderSummary,
       calculating,
       loadProducts,
-      onQuantityChanged
+      onQuantityChanged,
+      handlePaymentSuccess
     }
   }
 }

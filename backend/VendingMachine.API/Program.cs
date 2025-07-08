@@ -1,5 +1,6 @@
 using VendingMachine.Application.UseCases;
 using VendingMachine.Infrastructure;
+using VendingMachine.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,9 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IGetProductsUseCase, GetProductsUseCase>();
 builder.Services.AddScoped<ICalculateOrderTotalUseCase, CalculateOrderTotalUseCase>();
+builder.Services.AddSingleton<CashRegister>();
+builder.Services.AddScoped<IGetCashRegisterStatusUseCase, GetCashRegisterStatusUseCase>();
+builder.Services.AddScoped<IProcessPaymentUseCase, ProcessPaymentUseCase>();
 
 builder.Services.AddInfrastructure();
 

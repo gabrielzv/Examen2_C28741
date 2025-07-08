@@ -33,4 +33,29 @@ export const cartService = {
   }
 }
 
+export const paymentService = {
+  async getCashRegisterStatus() {
+    try {
+      const response = await apiClient.get('/payment/cash-register')
+      return response.data
+    } catch (error) {
+      console.error('Error fetching cash register status:', error)
+      throw error
+    }
+  },
+
+  async processPayment(payment, totalCost) {
+    try {
+      const response = await apiClient.post('/payment/process', {
+        payment,
+        totalCost
+      })
+      return response.data
+    } catch (error) {
+      console.error('Error processing payment:', error)
+      throw error
+    }
+  }
+}
+
 export default apiClient

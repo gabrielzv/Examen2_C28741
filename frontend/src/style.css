@@ -1,4 +1,3 @@
-/* Reset y estilos base */
 * {
   margin: 0;
   padding: 0;
@@ -20,7 +19,7 @@ body {
   padding: 20px;
 }
 
-/* Estilos para la máquina expendedora */
+/* Estilos para la maquina */
 .vending-machine {
   background: linear-gradient(145deg, #2c3e50, #34495e);
   border-radius: 20px;
@@ -177,7 +176,6 @@ body {
   margin: 20px 0;
 }
 
-/* Contenido principal con layout de carrito */
 .machine-content {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -391,4 +389,14 @@ body {
   color: #3498db;
   font-style: italic;
   padding: 10px;
+}
+
+/* Estilos del Panel de Pago */
+.payment-panel {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  margin-top: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
