@@ -21,4 +21,16 @@ export const productService = {
   }
 }
 
+export const cartService = {
+  async calculateTotal(cart) {
+    try {
+      const response = await apiClient.post('/cart/calculate-total', cart)
+      return response.data
+    } catch (error) {
+      console.error('Error calculating total:', error)
+      throw error
+    }
+  }
+}
+
 export default apiClient

@@ -18,6 +18,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<IGetProductsUseCase, GetProductsUseCase>();
+builder.Services.AddScoped<ICalculateOrderTotalUseCase, CalculateOrderTotalUseCase>();
 
 builder.Services.AddInfrastructure();
 

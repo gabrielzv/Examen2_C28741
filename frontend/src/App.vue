@@ -19,31 +19,52 @@
       </button>
     </div>
 
-    <!-- Productos -->
-    <div v-else class="products-grid">
-      <ProductCard 
-        v-for="product in products" 
-        :key="product.id" 
-        :product="product"
-      />
+    <!-- Contenido principal -->
+    <div v-else class="machine-content">
+      <!-- Lista de productos -->
+      <div class="products-section">
+        <div class="products-grid">
+          <ProductCard 
+            v-for="product in products" 
+            :key="product.id" 
+            :product="product"
+            @quantity-changed="onQuantityChanged"
+          />
+        </div>
+      </div>
+
+      <!-- Carrito -->
+      <div class="cart-section">
+        <CartSummary 
+          :cart-items="cartItems"
+          :products="products"
+          :order-summary="orderSummary"
+          :calculating="calculating"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import ProductCard from './components/ProductCard.vue'
-import { productService } from './services/api.js'
+import CartSummary from './components/CartSummary.vue'
+import { productService, cartService } from './services/api.js'
 
 export default {
   name: 'App',
   components: {
-    ProductCard
+    ProductCard,
+    CartSummary
   },
   setup() {
     const products = ref([])
     const loading = ref(false)
     const error = ref(null)
+    const cartItems = ref([])
+    const orderSummary = ref(null)
+    const calculating = ref(false)
 
     const loadProducts = async () => {
       loading.value = true
@@ -53,12 +74,64 @@ export default {
         const data = await productService.getAllProducts()
         products.value = data
       } catch (err) {
-        error.value = 'Error al cargar los productos.'
+        error.value = 'Error al cargar los productos. Verifique que el servidor esté ejecutándose.'
         console.error('Error loading products:', err)
       } finally {
         loading.value = false
       }
     }
+
+    const onQuantityChanged = (item) => {
+      // Actualizar carrito
+      const existingItemIndex = cartItems.value.findIndex(
+        cartItem => cartItem.productId === item.productId
+      )
+
+      if (item.quantity === 0) {
+        // Remover del carrito si es 0
+        if (existingItemIndex >= 0) {
+          cartItems.value.splice(existingItemIndex, 1)
+        }
+      } else {
+        // Agregar o actualizar en el carrito
+        if (existingItemIndex >= 0) {
+          cartItems.value[existingItemIndex].quantity = item.quantity
+        } else {
+          cartItems.value.push({
+            productId: item.productId,
+            quantity: item.quantity
+          })
+        }
+      }
+    }
+
+    const calculateTotal = async () => {
+      if (cartItems.value.length === 0) {
+        orderSummary.value = null
+        return
+      }
+
+      calculating.value = true
+      
+      try {
+        const cart = {
+          items: cartItems.value
+        }
+        
+        const summary = await cartService.calculateTotal(cart)
+        orderSummary.value = summary
+      } catch (err) {
+        console.error('Error calculating total:', err)
+        orderSummary.value = {
+          errors: ['Error al calcular el total']
+        }
+      } finally {
+        calculating.value = false
+      }
+    }
+
+    // Recalcular cuando cambie el carrito
+    watch(cartItems, calculateTotal, { deep: true })
 
     onMounted(() => {
       loadProducts()
@@ -68,7 +141,11 @@ export default {
       products,
       loading,
       error,
-      loadProducts
+      cartItems,
+      orderSummary,
+      calculating,
+      loadProducts,
+      onQuantityChanged
     }
   }
 }
