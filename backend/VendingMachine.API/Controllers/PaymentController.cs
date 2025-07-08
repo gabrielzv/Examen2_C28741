@@ -48,7 +48,7 @@ public class PaymentController : ControllerBase
                 return BadRequest(new { message = "Total cost must be greater than zero" });
             }
 
-            var result = await _processPaymentUseCase.ExecuteAsync(request.Payment, request.TotalCost);
+            var result = await _processPaymentUseCase.ExecuteAsync(request.Payment, request.TotalCost, request.Cart);
             return Ok(result);
         }
         catch (Exception ex)

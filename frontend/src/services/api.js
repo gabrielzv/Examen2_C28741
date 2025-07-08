@@ -44,11 +44,12 @@ export const paymentService = {
     }
   },
 
-  async processPayment(payment, totalCost) {
+  async processPayment(payment, totalCost, cart = null) {
     try {
       const response = await apiClient.post('/payment/process', {
         payment,
-        totalCost
+        totalCost,
+        cart
       })
       return response.data
     } catch (error) {

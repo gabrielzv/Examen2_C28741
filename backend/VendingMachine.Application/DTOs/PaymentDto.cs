@@ -30,4 +30,5 @@ public class ProcessPaymentRequestDto
 {
     public PaymentDto Payment { get; set; } = new();
     public decimal TotalCost { get; set; }
+    public CartDto? Cart { get; set; }
 }

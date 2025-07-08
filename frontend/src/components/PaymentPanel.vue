@@ -88,18 +88,8 @@
 
     <!-- Resultado del pago -->
     <div v-if="paymentResult" class="payment-result" :class="paymentResult.isSuccessful ? 'success' : 'error'">
+      <h5>{{ paymentResult.message }}</h5>
       
-      <div v-if="paymentResult.isSuccessful && paymentResult.changeAmount > 0" class="change-details">
-        <h5>Su cambio ({{ formatMoney(paymentResult.changeAmount) }}):</h5>
-        <div class="change-breakdown">
-          <div v-for="(quantity, coinType) in paymentResult.changeBreakdown" :key="coinType">
-            <span v-if="quantity > 0" class="change-item">
-              {{ getQuantityName(coinType) }}: {{ quantity }} {{ quantity === 1 ? 'unidad' : 'unidades' }}
-            </span>
-          </div>
-        </div>
-      </div>
-
       <div v-if="!paymentResult.isSuccessful && paymentResult.errors.length > 0" class="error-details">
         <ul>
           <li v-for="error in paymentResult.errors" :key="error">{{ error }}</li>
@@ -142,6 +132,10 @@ export default {
     showCashRegister: {
       type: Boolean,
       default: true
+    },
+    cart: {
+      type: Object,
+      default: null
     }
   },
   emits: ['payment-success'],
@@ -246,7 +240,7 @@ export default {
           totalInserted: totalInserted.value
         }
         
-        const result = await paymentService.processPayment(payment, props.totalCost)
+        const result = await paymentService.processPayment(payment, props.totalCost, props.cart)
         paymentResult.value = result
         
         if (result.isSuccessful) {

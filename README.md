@@ -13,8 +13,9 @@ Máquina expendedora de refrescos con stock, ventas y vuelto para el examen #2 d
 ### Backend
 ```bash
 cd backend
+cd VendingMachine.API
 dotnet restore
-dotnet run --project VendingMachine.API
+dotnet run
 ```
 
 ### Frontend

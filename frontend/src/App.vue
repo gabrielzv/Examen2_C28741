@@ -46,6 +46,7 @@
         <PaymentPanel 
           v-if="orderSummary && orderSummary.total > 0"
           :total-cost="orderSummary.total"
+          :cart="{ items: cartItems }"
           @payment-success="handlePaymentSuccess"
         />
       </div>
@@ -148,7 +149,7 @@ export default {
       await loadProducts()
       
       // Mostrar mensaje del cambio
-      alert(`Compra exitosa ${paymentResult.changeAmount > 0 ? `Su cambio es de ₡${paymentResult.changeAmount.toLocaleString()}` : ''}`)
+      alert(paymentResult.message)
     }
 
     // Recalcular cuando cambie el carrito
