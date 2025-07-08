@@ -24,3 +24,10 @@ cd frontend
 npm install
 npm run dev
 ```
+
+### Pruebas
+```bash
+cd backend
+cd VendingMachine.Tests
+dotnet test
+```
